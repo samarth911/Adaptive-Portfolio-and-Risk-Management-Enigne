@@ -20,7 +20,7 @@ export default function EngineLogPanel() {
 
   return (
     <div className="card engine-log-panel">
-      <div className="panel-header">AI Decision Log — What the engine did and why (in plain English)</div>
+      <div className="panel-header">AI Decision Log — What the engine did and why</div>
       <div className="log-container">
         {logs.length === 0 ? (
           <div className="log-empty">
