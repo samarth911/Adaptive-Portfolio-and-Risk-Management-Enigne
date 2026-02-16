@@ -76,6 +76,7 @@ export default function Dashboard() {
               if (res.data) setBacktest(res.data);
             } catch (e) {}
           }}
+          onResetBacktest={() => setBacktest(null)}
           onStressDone={setStressResult}
         />
         <RiskMetricsCard metrics={backtest?.metrics_with_risk} label="(with risk)" />

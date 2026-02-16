@@ -2,7 +2,7 @@ import { useState } from "react";
 import API, { startEngine, stopEngine, runBacktest, runStressTest, setRiskLevel } from "../api";
 import PaymentModal from "../payment_modal/PaymentModal";
 
-export default function PortfolioControls({ setStatus, onBacktestDone, onStressDone }) {
+export default function PortfolioControls({ setStatus, onBacktestDone, onStressDone, onResetBacktest }) {
   const [paymentModal, setPaymentModal] = useState(null);
   const [backtestLoading, setBacktestLoading] = useState(false);
   const [stressLoading, setStressLoading] = useState(false);
@@ -100,6 +100,15 @@ export default function PortfolioControls({ setStatus, onBacktestDone, onStressD
             >
               {backtestLoading ? "Running…" : "Run backtest"}
             </button>
+            {onResetBacktest && (
+              <button
+                type="button"
+                className="btn btn-secondary"
+                onClick={onResetBacktest}
+              >
+                Reset backtest
+              </button>
+            )}
             <button
               type="button"
               className="btn btn-amber"
