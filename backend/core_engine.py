@@ -28,13 +28,11 @@ class CoreEngine:
         start_date: str,
         end_date: str,
         risk_level: str = "MEDIUM",
-        regime_method: str = "rule",
     ):
         self.tickers = tickers
         self.start_date = start_date
         self.end_date = end_date
         self.risk_level = risk_level
-        self.regime_method = regime_method
         risk_params = cfg.RISK_LEVELS.get(risk_level, cfg.RISK_LEVELS["MEDIUM"])
         self.vol_target = risk_params["vol_target"]
         self.max_drawdown_limit = risk_params["max_drawdown_limit"]
@@ -60,7 +58,6 @@ class CoreEngine:
         self.regime_engine = RegimeEngine(
             vol_threshold=cfg.VOL_THRESHOLD,
             drawdown_threshold=cfg.DRAWDOWN_THRESHOLD,
-            method=self.regime_method,
         )
         self.regime_series = self.regime_engine.generate_regime_series(
             self.features["volatility"],
@@ -151,7 +148,7 @@ class CoreEngine:
         self,
     ) -> Dict[str, Any]:
         """
-        Run backtest WITH and WITHOUT risk engine. Return both equity curves and metrics.
+        Run backtest WITH and WITHOUT risk engine. Returns both equity curves and metrics.
         """
         if self.returns is None:
             self.load_and_prepare()

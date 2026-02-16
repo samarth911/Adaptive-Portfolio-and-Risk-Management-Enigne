@@ -116,13 +116,25 @@ class DataEngine:
         """All features needed for regime and allocation. No leakage."""
         if self._features is not None:
             return self._features
+
+        returns_df = self.get_returns()
+        
+        # Align all generated features to the returns index to ensure consistent length
+        common_index = returns_df.index
+        
+        volatility = self.rolling_volatility().loc[common_index]
+        momentum = self.rolling_momentum().loc[common_index]
+        trend_signal = self.moving_average_trend().loc[common_index]
+        drawdown = self.rolling_drawdown().loc[common_index]
+        correlation = self.rolling_correlation() # rolling_correlation is complex, handle alignment carefully
+
         self._features = {
-            "returns": self.get_returns(),
-            "volatility": self.rolling_volatility(),
-            "momentum": self.rolling_momentum(),
-            "trend_signal": self.moving_average_trend(),
-            "drawdown": self.rolling_drawdown(),
-            "correlation": self.rolling_correlation(),
+            "returns": returns_df,
+            "volatility": volatility,
+            "momentum": momentum,
+            "trend_signal": trend_signal,
+            "drawdown": drawdown,
+            "correlation": correlation,
         }
         return self._features
 

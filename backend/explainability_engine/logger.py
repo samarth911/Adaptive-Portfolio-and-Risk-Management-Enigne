@@ -22,7 +22,6 @@ def _plain_language(
     portfolio_volatility: Optional[float],
     risk_reduced: bool,
 ) -> Dict[str, str]:
-    """Generate 12th-grade-friendly explanations."""
     regime_explain = {
         "TRENDING_UP": "the market is in an **upward trend** (prices are generally going up over time).",
         "TRENDING_DOWN": "the market is in a **downward trend** (prices are generally going down).",
