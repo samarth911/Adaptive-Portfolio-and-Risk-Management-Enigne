@@ -86,3 +86,8 @@ frontend/
 ## Config
 
 Edit `backend/config.py` for vol target, max drawdown, rebalance frequency, train/test windows, and risk-level presets.
+
+For HCL hackathon made by -
+syed gufran hussain
+samarth negi
+shivam maurya
