@@ -28,11 +28,13 @@ class CoreEngine:
         start_date: str,
         end_date: str,
         risk_level: str = "MEDIUM",
+        vol_window: int = 21,
     ):
         self.tickers = tickers
         self.start_date = start_date
         self.end_date = end_date
         self.risk_level = risk_level
+        self.vol_window = vol_window
         risk_params = cfg.RISK_LEVELS.get(risk_level, cfg.RISK_LEVELS["MEDIUM"])
         self.vol_target = risk_params["vol_target"]
         self.max_drawdown_limit = risk_params["max_drawdown_limit"]
@@ -51,7 +53,7 @@ class CoreEngine:
     def load_and_prepare(self) -> Tuple[pd.DataFrame, pd.DataFrame]:
         """Load data and compute features. Returns (prices, returns)."""
         self.data_engine = DataEngine(
-            self.tickers, self.start_date, self.end_date
+            self.tickers, self.start_date, self.end_date, vol_window=self.vol_window
         )
         self.prices, self.returns = self.data_engine.load()
         self.features = self.data_engine.get_features()
@@ -71,6 +73,7 @@ class CoreEngine:
             max_drawdown_limit=self.max_drawdown_limit,
             exposure_floor=self.exposure_floor,
             enabled=True,
+            vol_window=self.vol_window,
         )
         self.explainability = ExplainabilityEngine()
         return self.prices, self.returns

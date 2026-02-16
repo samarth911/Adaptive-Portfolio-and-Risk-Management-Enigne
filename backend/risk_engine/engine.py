@@ -24,6 +24,7 @@ class RiskEngine:
         exposure_floor: float = 0.2,
         stop_loss_threshold: Optional[float] = None,  # e.g. -0.05 for -5% daily
         enabled: bool = True,
+        vol_window: int = 21,
     ):
         self.returns = returns
         self.vol_target = vol_target
@@ -31,6 +32,7 @@ class RiskEngine:
         self.exposure_floor = exposure_floor
         self.stop_loss_threshold = stop_loss_threshold
         self.enabled = enabled
+        self.vol_window = vol_window
 
     def apply(
         self,
@@ -56,7 +58,7 @@ class RiskEngine:
         if port_vol > 1e-8 and port_vol > self.vol_target:
             scale = self.vol_target / port_vol
             w = {k: v * scale for k, v in w.items()}
-        w = self._normalize(w)
+        
         # B) Drawdown protection
         if equity_curve is not None and len(equity_curve) > 0:
             cummax = equity_curve.cummax()
@@ -64,13 +66,14 @@ class RiskEngine:
             current_dd = dd.iloc[-1] if hasattr(dd, "iloc") else float(dd)
             if not np.isnan(current_dd) and current_dd < self.max_drawdown_limit:
                 w = {k: v * self.exposure_floor for k, v in w.items()}
-        w = self._normalize(w)
+        
         return w
 
     def _portfolio_vol(self, weights: Dict[str, float], index: int) -> float:
-        if index < 30:
+        if index < self.vol_window:
             return 0.0
-        window = self.returns.iloc[:index]
+        start_index = index - self.vol_window
+        window = self.returns.iloc[start_index:index]
         cov = window.cov() * 252
         if cov.isnull().values.any():
             return 0.0
